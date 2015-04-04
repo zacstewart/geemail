@@ -4,7 +4,6 @@ module Gmail
   class Client
     def initialize(token, username: 'me')
       @username = username
-      @token = token
       @connection = Faraday.new('https://www.googleapis.com/gmail/v1/users/me') do |conn|
         conn.request :oauth2, token
         conn.request :json
