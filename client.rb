@@ -17,9 +17,12 @@ module Gmail
       return enum_for(__method__) unless block_given?
 
       response = @connection.get('messages', q: query)
+      raise Unauthorized if response.status == 401
       response.body.fetch('messages').lazy.each do |ref|
         yield Message.new(@connection.get("messages/#{ref['id']}").body)
       end
     end
   end
+
+  Unauthorized = Class.new(StandardError)
 end
