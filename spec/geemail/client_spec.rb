@@ -48,4 +48,15 @@ describe Geemail::Client do
       expect { |b| client.messages(&b) }.to yield_control.exactly(100).times
     end
   end
+
+  describe '#get_message' do
+    it 'requests the message' do
+      client.get_message('14c86db7a27b8ff5')
+      expect(get_request).to have_been_made
+    end
+
+    it 'returns a Message' do
+      expect(client.get_message('14c86db7a27b8ff5')).to be_a(Geemail::Message)
+    end
+  end
 end
