@@ -1,3 +1,5 @@
+require 'base64'
+
 module Geemail
   class Message
     attr_reader :id, :subject, :from, :body
@@ -7,32 +9,39 @@ module Geemail
       @representation = representation
     end
 
-    def subject
-      header = @representation.
-        fetch('payload').
-        fetch('headers').
-        find { |h| h['name'] == 'Subject' } and
-        header.fetch('value')
-    rescue KeyError
-      ''
+    def body
+      body = payload.fetch('body')
+      if body.fetch('size') > 0
+        Base64.decode64(body.fetch('data'))
+      else
+        part = payload.fetch('parts').find { |p| p['mimeType'] == 'text/plain' }
+        Base64.decode64(part.fetch('body').fetch('data'))
+      end.chomp
     end
 
     def from
-      header = @representation.
-        fetch('payload').
-        fetch('headers').
-        find { |h| h['name'] == 'From' } and
-        header.fetch('value')
-    rescue KeyError
-      ''
+      headers.fetch('From')
     end
 
-    def body
-      @representation.
-        fetch('payload').
-        fetch('body')
-    rescue KeyError
-      ''
+    def headers
+      @headers ||= payload.
+        fetch('headers').
+        map { |h| [h['name'], h['value']] }.
+        to_h
+    end
+
+    def subject
+      headers.fetch('Subject')
+    end
+
+    def to
+      headers.fetch('To')
+    end
+
+    private
+
+    def payload
+      @representation.fetch('payload')
     end
   end
 end
