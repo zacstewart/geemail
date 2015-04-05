@@ -1,5 +1,7 @@
 # Geemail
 
+[![Build Status](https://travis-ci.org/zacstewart/geemail.svg?branch=master)](https://travis-ci.org/zacstewart/geemail)
+
 A gem for using [Google's Gmail REST API][gmail-rest-api].
 
 ## Installation
