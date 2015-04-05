@@ -1,5 +1,6 @@
 require 'faraday'
 require 'faraday_middleware'
+require 'mail'
 
 module Geemail
   class Client
@@ -24,7 +25,7 @@ module Geemail
     end
 
     def get_message(id)
-      Message.new(@connection.get("messages/#{id}").body)
+      Message.parse(@connection.get("messages/#{id}", format: 'RAW').body)
     end
   end
 

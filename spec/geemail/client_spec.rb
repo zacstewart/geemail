@@ -1,6 +1,7 @@
 require 'geemail'
 require 'spec_helper'
 require 'webmock/rspec'
+require 'mail'
 
 describe Geemail::Client do
   let(:token) { 'a_token' }
@@ -56,7 +57,7 @@ describe Geemail::Client do
     end
 
     it 'returns a Message' do
-      expect(client.get_message('14c86db7a27b8ff5')).to be_a(Geemail::Message)
+      expect(client.get_message('14c86db7a27b8ff5')).to be_a(Mail::Message)
     end
   end
 end
