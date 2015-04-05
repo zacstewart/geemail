@@ -1,4 +1,5 @@
 require 'faraday'
+require 'faraday_middleware'
 
 module Geemail
   class Client
