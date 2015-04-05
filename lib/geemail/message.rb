@@ -1,4 +1,4 @@
-module Gmail
+module Geemail
   class Message
     attr_reader :id, :subject, :from, :body
 

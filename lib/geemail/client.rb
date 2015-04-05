@@ -1,6 +1,6 @@
 require 'faraday'
 
-module Gmail
+module Geemail
   class Client
     def initialize(token, username: 'me')
       @username = username
