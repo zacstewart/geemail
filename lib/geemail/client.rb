@@ -15,7 +15,7 @@ module Geemail
     end
 
     def messages(query: '')
-      return enum_for(__method__) unless block_given?
+      return enum_for(__method__, query: query) unless block_given?
 
       response = @connection.get('messages', q: query)
       raise Unauthorized if response.status == 401
