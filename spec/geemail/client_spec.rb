@@ -1,7 +1,7 @@
 require 'geemail'
+require 'mail'
 require 'spec_helper'
 require 'webmock/rspec'
-require 'mail'
 
 describe Geemail::Client do
   let(:token) { 'a_token' }
