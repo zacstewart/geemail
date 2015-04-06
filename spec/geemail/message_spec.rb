@@ -12,6 +12,10 @@ describe Geemail::Message do
 
   subject(:message) { described_class.parse(representation) }
 
+  describe '#id' do
+    specify { expect(message.id).to eq('14c86fb63bf4e4eb') }
+  end
+
   describe '#subject' do
     specify { expect(message.subject).to eq('This is a test email') }
   end
