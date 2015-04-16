@@ -14,6 +14,19 @@ module Geemail
       end
     end
 
+    def create_label(name)
+      Label.parse(@connection.post('labels', name: name).body)
+    end
+
+    def labels
+      return enum_for(__method__) unless block_given?
+
+      response = @connection.get('labels')
+      response.body.fetch('labels').each do |label|
+        yield Label.parse(label)
+      end
+    end
+
     def messages(query: '')
       return enum_for(__method__, query: query) unless block_given?
 
@@ -25,7 +38,28 @@ module Geemail
     end
 
     def get_message(id)
-      Message.parse(@connection.get("messages/#{id}", format: 'RAW').body)
+      Message.parse(@connection.get("messages/#{id}", format: 'RAW').body, client: self)
+    end
+
+    def modify_message(id, add_labels: [], remove_labels: [])
+      all_labels = labels.to_a
+
+      new_labels = add_labels - all_labels.map(&:name)
+      new_label_ids = new_labels.map { |label| create_label(label).id }
+
+      add_label_ids = all_labels.
+        select { |l| add_labels.include?(l.name) }.
+        map(&:id)
+
+      remove_label_ids = all_labels.
+        select { |l| remove_labels.include?(l.name) }.
+        map(&:id)
+
+      @connection.post(
+        'messages/modify',
+        'addLabelIds' => (add_label_ids + new_label_ids),
+        'removeLabelIds' => remove_label_ids
+      )
     end
   end
 

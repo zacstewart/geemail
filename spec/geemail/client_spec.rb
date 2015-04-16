@@ -7,6 +7,13 @@ describe Geemail::Client do
   let(:token) { 'a_token' }
   subject(:client) { described_class.new(token) }
 
+  let!(:create_label_request) do
+    stub_request(
+      :post,
+      'https://www.googleapis.com/gmail/v1/users/me/labels?access_token=a_token',
+    ).to_return(fixture('label-create'))
+  end
+
   let!(:list_request) do
     stub_request(
       :get,
@@ -19,6 +26,20 @@ describe Geemail::Client do
       :get,
       /https:\/\/www.googleapis.com\/gmail\/v1\/users\/me\/messages\/\h+\?access_token=a_token/
     ).to_return(fixture('multi-part-html-message'))
+  end
+
+  let!(:list_labels_request) do
+    stub_request(
+      :get,
+      'https://www.googleapis.com/gmail/v1/users/me/labels?access_token=a_token'
+    ).to_return(fixture('labels-list'))
+  end
+
+  let!(:modify_message_request) do
+    stub_request(
+      :post,
+      'https://www.googleapis.com/gmail/v1/users/me/messages/modify?access_token=a_token'
+    )
   end
 
   describe '#messages' do
@@ -58,6 +79,47 @@ describe Geemail::Client do
 
     it 'returns a Message' do
       expect(client.get_message('14c86db7a27b8ff5')).to be_a(Geemail::Message)
+    end
+  end
+
+  describe '#modify_message' do
+    it 'finds the labels' do
+      client.modify_message('14c86db7a27b8ff5', add_labels: ['Open Source'])
+      expect(list_labels_request).to have_been_made
+    end
+
+    context 'with a pre-existing label' do
+      it 'adds labels by id' do
+        client.modify_message('14c86db7a27b8ff5', add_labels: ['Open Source'])
+        expect(modify_message_request.with(
+          body: {addLabelIds: ['Label_18'], removeLabelIds: []}
+        )).to have_been_made
+      end
+
+      it 'removes labels by id' do
+        client.modify_message('14c86db7a27b8ff5', remove_labels: ['Open Source'])
+        expect(modify_message_request.with(
+          body: {addLabelIds: [], removeLabelIds: ['Label_18']}
+        )).to have_been_made
+      end
+    end
+
+    context 'with a new label' do
+      it 'creates the label' do
+        client.modify_message('14c86db7a27b8ff5', add_labels: ['New Label'])
+
+        expect(create_label_request.with(
+          body: {name: 'New Label'}
+        )).to have_been_made
+      end
+
+      it 'adds the new label by id' do
+        client.modify_message('14c86db7a27b8ff5', add_labels: ['New Label'])
+
+        expect(modify_message_request.with(
+          body: {addLabelIds: ['Label_37'], removeLabelIds: []}
+        )).to have_been_made
+      end
     end
   end
 end

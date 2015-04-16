@@ -1,4 +1,5 @@
 require 'geemail/client'
+require 'geemail/label'
 require 'geemail/message'
 require 'geemail/version'
 
