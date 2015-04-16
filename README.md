@@ -31,6 +31,14 @@ client.messages(query: 'tacos').each do |message|
 end
 ```
 
+## Development
+
+### Recording an HTTP response fixture
+
+Get an access token and supply it to cURL:
+
+    $ curl -i -H "Authorization: Bearer A_VALID_ACCESS_TOKEN" https://www.googleapis.com/gmail/v1/users/me/labels
+
 ## Contributing
 
 1. Fork it ( https://github.com/zacstewart/geemail/fork )
