@@ -38,7 +38,7 @@ describe Geemail::Client do
   let!(:modify_message_request) do
     stub_request(
       :post,
-      'https://www.googleapis.com/gmail/v1/users/me/messages/modify?access_token=a_token'
+      /https:\/\/www.googleapis.com\/gmail\/v1\/users\/me\/messages\/\h+\/modify\?access_token=a_token/
     )
   end
 

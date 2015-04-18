@@ -56,7 +56,7 @@ module Geemail
         map(&:id)
 
       @connection.post(
-        'messages/modify',
+        "messages/#{id}/modify",
         'addLabelIds' => (add_label_ids + new_label_ids),
         'removeLabelIds' => remove_label_ids
       )
