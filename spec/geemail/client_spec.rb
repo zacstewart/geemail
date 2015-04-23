@@ -67,7 +67,7 @@ describe Geemail::Client do
     end
 
     it 'yields the messages' do
-      expect { |b| client.messages(&b) }.to yield_control.exactly(100).times
+      expect { |b| client.messages(&b) }.to yield_control.exactly(10).times
     end
   end
 
