@@ -6,27 +6,42 @@ module Geemail
   class Message < SimpleDelegator
     attr_reader :id
 
-    def self.parse(representation, client: nil)
-      new(representation, client: client)
+    def self.create(from:, to:, subject:, body:, client: nil)
+      mail = Mail.new
+      mail.from = from
+      mail.to = to
+      mail.subject = subject
+      mail.body = body
+      new(mail, client: client)
     end
 
-    def initialize(representation, client: nil)
-      @id = representation.fetch('id')
-      @client = client
+    def self.parse(representation, client: nil)
+      id = representation.fetch('id')
       mail = Mail.new(Base64.urlsafe_decode64(representation.fetch('raw')))
+      new(mail, id: id, client: client)
+    end
+
+    def initialize(mail, id: nil, client: nil)
       super mail
+      @id = id
+      @client = client
     end
 
     def add_labels(*labels)
-      unless client
-        raise ArgumentError, "#{__method__} require Message to have a Client"
-      end
-
       client.modify_message(id, add_labels: labels)
+    end
+
+    def deliver
+      client.send_message(self.to_s)
     end
 
     private
 
-    attr_reader :client
+    def client
+      return @client unless @client.nil?
+
+      calling_method = caller_locations(1,1).first.label
+      raise ArgumentError, "#{calling_method} requires Message to have a Client"
+    end
   end
 end

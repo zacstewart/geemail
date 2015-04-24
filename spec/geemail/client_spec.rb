@@ -42,6 +42,13 @@ describe Geemail::Client do
     )
   end
 
+  let!(:send_email_request) do
+    stub_request(
+      :post,
+      'https://www.googleapis.com/upload/gmail/v1/users/me/messages/send?access_token=a_token&uploadType=media'
+    )
+  end
+
   describe '#messages' do
     it 'is an enumerator' do
       expect(client.messages).to be_a(Enumerator)
@@ -118,6 +125,24 @@ describe Geemail::Client do
 
         expect(modify_message_request.with(
           body: {addLabelIds: ['Label_37'], removeLabelIds: []}
+        )).to have_been_made
+      end
+    end
+  end
+
+  describe '#send_message' do
+    let(:raw) { fixture('raw-email').read }
+
+    it 'sends a raw email message' do
+      client.send_message(raw)
+      expect(send_email_request.with(body: {raw: raw})).to have_been_made
+    end
+
+    context 'in a particular thread' do
+      it 'sends a raw message with a thread id' do
+        client.send_message(raw, thread_id: 'some_thread')
+        expect(send_email_request.with(
+          body: {raw: raw, threadId: 'some_thread'}
         )).to have_been_made
       end
     end

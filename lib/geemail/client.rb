@@ -61,6 +61,12 @@ module Geemail
         'removeLabelIds' => remove_label_ids
       )
     end
+
+    def send_message(raw, thread_id: nil)
+      body = {'raw' => raw}
+      body['threadId'] = thread_id if thread_id
+      @connection.post('https://www.googleapis.com/upload/gmail/v1/users/me/messages/send?uploadType=media', body)
+    end
   end
 
   Unauthorized = Class.new(StandardError)
