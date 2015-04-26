@@ -1,5 +1,6 @@
 require 'faraday'
 require 'faraday_middleware'
+require 'json'
 require 'mail'
 
 module Geemail
@@ -65,7 +66,11 @@ module Geemail
     def send_message(raw, thread_id: nil)
       body = {'raw' => raw}
       body['threadId'] = thread_id if thread_id
-      @connection.post('https://www.googleapis.com/upload/gmail/v1/users/me/messages/send?uploadType=media', body)
+      @connection.post do |request|
+        request.url 'https://www.googleapis.com/upload/gmail/v1/users/me/messages/send?uploadType=media'
+        request.headers['Content-Type'] = 'message/rfc822'
+        request.body = JSON.generate(body)
+      end
     end
   end
 
