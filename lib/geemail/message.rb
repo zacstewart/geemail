@@ -32,7 +32,7 @@ module Geemail
     end
 
     def deliver
-      client.send_message(self.to_s)
+      client.send_message(Base64.urlsafe_encode64(to_s))
     end
 
     private

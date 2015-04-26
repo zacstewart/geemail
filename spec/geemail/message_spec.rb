@@ -60,7 +60,7 @@ describe Geemail::Message do
 
   describe '#deliver' do
     it 'tells the client to send the message' do
-      expect(client).to receive(:send_message).with(mail.to_s)
+      expect(client).to receive(:send_message).with(Base64.urlsafe_encode64(mail.to_s))
       message.deliver
     end
   end

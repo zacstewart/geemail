@@ -1,3 +1,4 @@
+require 'base64'
 require 'geemail'
 require 'mail'
 require 'spec_helper'
@@ -131,7 +132,7 @@ describe Geemail::Client do
   end
 
   describe '#send_message' do
-    let(:raw) { fixture('raw-email').read }
+    let(:raw) { Base64.urlsafe_encode64(fixture('raw-email').read) }
 
     it 'sends a raw email message' do
       client.send_message(raw)
