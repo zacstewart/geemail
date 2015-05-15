@@ -33,7 +33,7 @@ module Geemail
 
       response = @connection.get('messages', q: query)
       raise Unauthorized if response.status == 401
-      response.body.fetch('messages').lazy.each do |ref|
+      response.body.fetch('messages', []).lazy.each do |ref|
         yield get_message(ref.fetch('id'))
       end
     end

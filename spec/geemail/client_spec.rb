@@ -77,6 +77,19 @@ describe Geemail::Client do
     it 'yields the messages' do
       expect { |b| client.messages(&b) }.to yield_control.exactly(10).times
     end
+
+    context 'when the messages response is empty' do
+      let!(:list_request) do
+        stub_request(
+          :get,
+          'https://www.googleapis.com/gmail/v1/users/me/messages?access_token=a_token&q='
+        ).to_return(fixture('messages-empty'))
+      end
+
+      it 'yields no messages' do
+        expect { |b| client.messages(&b) }.not_to yield_control
+      end
+    end
   end
 
   describe '#get_message' do
