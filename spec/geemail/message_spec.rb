@@ -46,6 +46,10 @@ describe Geemail::Message do
       expect(message.to).to eq(['zgstewart@gmail.com'])
       expect(message.body).to match(
         'Hi there. This is a test email for creating a fixture. Enjoy Geemail!')
+      expect(message.text_part.to_s).to match(
+        'Hi there. This is a test email for creating a fixture. Enjoy Geemail!')
+      expect(message.html_part.to_s).to match(
+        'Hi there. This is a test email for creating a fixture. Enjoy Geemail!')
     end
   end
 
