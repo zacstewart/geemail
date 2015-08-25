@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = Geemail::VERSION
   spec.authors       = ["Zac Stewart"]
   spec.email         = ["zgstewart@gmail.com"]
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
+  spec.summary       = %q{Gem for using the GMail REST API}
+  spec.description   = %q{Gem for using the GMail REST API}
   spec.homepage      = ""
   spec.license       = "MIT"
 
